@@ -1,6 +1,6 @@
 # ==========================================
-# 🦁 獅王戰情室 V10.5：GitHub 完美移植版
-# 功能：介面與邏輯 100% 復刻 Colab 版本 + 自動存檔記憶
+# 🦁 獅王戰情室 V13.5：GitHub 完美移植版
+# 功能：移除 Flask，改為靜態生成，介面與 V10.5 完全一致
 # ==========================================
 import os
 import datetime
@@ -37,12 +37,11 @@ DEFAULT_POOL = [
 class LionGithubEngine:
     def __init__(self):
         self.today_str = datetime.date.today().strftime('%Y-%m-%d')
-        # 改為固定檔名，方便 GitHub 追蹤
         self.ledger_file = 'Lion_Ledger.csv' 
         self.ledger = self.load_ledger()
 
     def load_ledger(self):
-        # 嘗試讀取 GitHub 上的舊帳本
+        # 讀取 GitHub 上的舊帳本，確保數據連貫
         if os.path.exists(self.ledger_file):
             print("📂 讀取歷史帳本...")
             try:
@@ -94,10 +93,7 @@ class LionGithubEngine:
         status = "中性"; us_status = "中性"
         if mkt_df is None: return status, us_status
         try:
-            # 修正：處理 timezone 問題
             if mkt_df.index.tz is None: mkt_df.index = mkt_df.index.tz_localize(None)
-            
-            # 使用 asof 尋找最接近的日期 (解決 GitHub Action 執行時區可能導致的數據落差)
             idx = mkt_df.index.get_indexer([date], method='nearest')[0]
             curr_date = mkt_df.index[idx]
             
@@ -125,7 +121,6 @@ class LionGithubEngine:
     def run(self):
         mkt_data, stk_data = self.prepare_data(days=120)
         
-        # 若抓不到資料 (例如假日或 API 異常)，生成錯誤頁面但保留舊帳本
         if mkt_data is None or stk_data is None or not stk_data:
             print("⚠️ 無法取得市場數據")
             self.generate_report(pd.DataFrame(), "⚠️ 暫無數據 (假日或休市)")
@@ -136,7 +131,7 @@ class LionGithubEngine:
         tw_env, us_env = self.sense_market(mkt_data, sim_date)
         strict = True if us_env == "美股偏弱" else False
 
-        # Phase A: 庫存管理 (檢查是否需賣出)
+        # Phase A: 庫存管理
         open_pos = self.ledger[self.ledger['狀態'] == '持倉']
         for idx, row in open_pos.iterrows():
             t = row['代號']
@@ -153,7 +148,6 @@ class LionGithubEngine:
                 fee, tax = self.calc_cost(rev, True)
                 pnl = rev - fee - tax - row['總成本']
                 roi = (pnl / row['總成本']) * 100
-                
                 self.ledger.at[idx, '狀態'] = '已平倉'
                 self.ledger.at[idx, '賣出日期'] = d_str
                 self.ledger.at[idx, '賣出價'] = round(price, 2)
@@ -166,9 +160,7 @@ class LionGithubEngine:
         candidates = []
         for t, df in stk_data.items():
             row = df.iloc[-1]
-            # 確保 MA 有值
             if pd.isna(row['MA20']) or pd.isna(row['MA60']): continue
-            
             s2 = (row['Close'] > row['MA20'] and row['MA20'] > row['MA60'])
             s3 = (row['RSI'] < 30)
             s4 = (row['Volume'] > row['VolMA5'] and row['Close'] > row['MA20'])
@@ -217,7 +209,7 @@ class LionGithubEngine:
         self.generate_report(new_buys_df, d_str)
 
     def generate_report(self, new_buys_df, date_str):
-        # 數據準備 (V10.5 邏輯)
+        # --- 這裡開始是 V10.5 的原始介面代碼 ---
         closed = self.ledger[self.ledger['狀態'] == '已平倉']
         open_pos = self.ledger[self.ledger['狀態'] == '持倉']
         
@@ -263,9 +255,9 @@ class LionGithubEngine:
                 </div>"""
         else: hold_cards = "<div class='no-data'>目前空手</div>"
 
-        # 3. 完整頁面 HTML (V10.5 樣式)
+        # 3. 完整 HTML 生成 (包含 CSS)
         html = f"""
-        <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>獅王 V10.5</title>
+        <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>獅王 V13.5</title>
         <style>
             body{{font-family:sans-serif;background:#f0f2f5;padding:10px;margin:0}}
             .card{{background:white;padding:15px;border-radius:12px;margin-bottom:12px;box-shadow:0 2px 5px rgba(0,0,0,0.05)}}
@@ -275,35 +267,4 @@ class LionGithubEngine:
             .money-lbl{{font-size:0.75em;color:#666}}
             .section-title{{font-size:1em;color:#333;margin:20px 0 8px 0;border-left:4px solid #d93025;padding-left:8px;font-weight:bold}}
             .trade-card{{background:#fff;border-left:5px solid #2c3e50;padding:12px;margin-bottom:8px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.1)}}
-            .trade-header{{display:flex;justify-content:space-between;font-weight:bold;margin-bottom:5px}}
-            .trade-detail{{font-size:0.9em;color:#555;margin-bottom:5px}}
-            .trade-footer{{font-size:0.8em;color:#999;border-top:1px solid #f0f0f0;padding-top:5px}}
-            .pnl-pos{{color:#d93025;font-weight:bold}} .no-data{{text-align:center;color:#999;padding:10px}}
-            .tag{{padding:2px 5px;border-radius:3px;color:white;font-size:0.75em;margin-left:5px}}
-            .t-lion{{background:#d93025}} .t-bear{{background:#f9ab00}} .t-main{{background:#333}}
-            .refresh-btn{{display:block;width:100%;padding:10px;background:#2c3e50;color:white;text-align:center;text-decoration:none;border-radius:8px;margin-bottom:15px}}
-        </style></head><body>
-            <div class="card" style="text-align:center">
-                <h2 style="margin:0;color:#2c3e50">🦁 獅王戰情 V10.5 (GitHub版)</h2>
-                <div style="font-size:0.8em;color:#888;margin-bottom:5px">{date_str}</div>
-                <div style="background:#eee;height:10px;border-radius:5px;margin:10px 0;overflow:hidden"><div style="background:#d93025;width:{progress}%;height:100%"></div></div>
-                <div style="text-align:right;color:#d93025;font-size:0.8em;font-weight:bold">目標 30 萬: 達成 {int(progress)}%</div>
-            </div>
-            <div class="money-grid">
-                <div class="money-item" style="border-color:#f9ab00"><span class="money-val">${int(current_total):,}</span><span class="money-lbl">💰 總權益</span></div>
-                <div class="money-item" style="border-color:{pnl_color}"><span class="money-val" style="color:{pnl_color}">${int(net_profit):,}</span><span class="money-lbl">💵 淨損益</span></div>
-                <div class="money-item"><span class="money-val">${int(invested):,}</span><span class="money-lbl">📉 已投入</span></div>
-                <div class="money-item" style="border-color:#2f855a"><span class="money-val">${int(remaining):,}</span><span class="money-lbl">🔋 可用資金</span></div>
-            </div>
-            <div class="section-title">🚨 隔日進場訊號</div>{buy_cards}
-            <div class="section-title">🛡️ 持倉監控</div>{hold_cards}
-        </body></html>
-        """
-        
-        # 儲存網頁，GitHub Pages 會讀取這個檔案
-        with open('index.html', 'w', encoding='utf-8') as f:
-            f.write(html)
-
-if __name__ == "__main__":
-    bot = LionGithubEngine()
-    bot.run()
+            .trade-header{{display:flex;justify-content:space-between;font-weight:bold;margin-bottom:5
