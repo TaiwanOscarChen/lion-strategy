@@ -3,7 +3,7 @@ name: Lion King Strategy Daily Run
 on:
   schedule:
     # 設定每天自動執行 (UTC時間 21:00 = 台灣時間清晨 05:00)
-    # 這裡設為每小時執行一次，確保您隨時看都有數據
+    # 為了讓您測試，設為每小時執行一次
     - cron: '0 * * * *'
   workflow_dispatch: # 允許手動按按鈕執行
 
@@ -21,7 +21,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.9'
+          python-version: '3.12'  # 👈 關鍵修改：升級到 3.12
 
       - name: Install dependencies
         run: |
