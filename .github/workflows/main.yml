@@ -4,7 +4,7 @@ on:
   schedule:
     # 台灣時間早上 08:30 自動執行 (UTC 00:30)
     - cron: '30 0 * * *'
-  workflow_dispatch: # 允許手動按按鈕執行
+  workflow_dispatch: # 允許手動執行
 
 permissions:
   contents: write
@@ -34,15 +34,12 @@ jobs:
           git config --global user.name "LionBot"
           git config --global user.email "bot@lion.strategy"
           
-          # 1. 先把機器人算好的檔案加入暫存
+          # 1. 加入變更 (網頁與帳本)
           git add index.html Lion_Ledger.csv
           
-          # 2. 【關鍵修正】先 Commit (存檔到本地)，把變更鎖定
-          # 這樣 git pull 就不會覺得檔案是「未儲存的垃圾」而報錯
+          # 2. 提交變更
           git commit -m "📊 Daily Update: Ledger & Report" || echo "No changes to commit"
           
-          # 3. 鎖定後再拉取最新版 (Rebase)，將您的存檔「疊加」在最新版本之上
+          # 3. 【關鍵修正】先拉取再推送，避免衝突
           git pull --rebase
-          
-          # 4. 最後推送到雲端
           git push
