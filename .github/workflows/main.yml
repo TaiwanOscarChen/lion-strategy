@@ -33,7 +33,9 @@ jobs:
         run: |
           git config --global user.name "LionBot"
           git config --global user.email "bot@lion.strategy"
-          # 這裡關鍵：同時儲存 網頁(index.html) 和 帳本(Lion_Ledger.csv)
           git add index.html Lion_Ledger.csv
           git commit -m "📊 Daily Update: Ledger & Report" || echo "No changes to commit"
+          
+          # 👇👇👇 關鍵修復：先拉取最新版，再推送到雲端 👇👇👇
+          git pull --rebase
           git push
