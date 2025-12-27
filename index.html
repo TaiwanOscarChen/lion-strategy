@@ -1,156 +1,75 @@
 
-        <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>獅王 V9.1 戰略儀表板</title>
+        <!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>獅王 V10.5</title>
         <style>
-            body{font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;background:#f0f2f5;padding:10px;margin:0}
+            body{font-family:sans-serif;background:#f0f2f5;padding:10px;margin:0}
             .card{background:white;padding:15px;border-radius:12px;margin-bottom:12px;box-shadow:0 2px 5px rgba(0,0,0,0.05)}
-            .header h2{margin:0;color:#2c3e50;font-size:1.3em;text-align:center}
-            .date{color:#888;font-size:0.8em;text-align:center;margin-bottom:10px}
-            .progress-wrap{background:#e9ecef;border-radius:10px;height:10px;margin:10px 0;overflow:hidden}
-            .progress-bar{background:linear-gradient(90deg, #ff9966, #d93025);height:100%;width:0%}
             .money-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
             .money-item{background:#f8f9fa;padding:10px;border-radius:8px;text-align:center;border-left:3px solid #ccc}
             .money-val{font-size:1.1em;font-weight:bold;display:block;color:#333}
             .money-lbl{font-size:0.75em;color:#666}
             .section-title{font-size:1em;color:#333;margin:20px 0 8px 0;border-left:4px solid #d93025;padding-left:8px;font-weight:bold}
-            .trade-card{background:#fff;border-left:5px solid #ccc;padding:12px;margin-bottom:8px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
-            .trade-header{display:flex;justify-content:space-between;font-weight:bold;margin-bottom:6px;font-size:1em}
-            .trade-detail{display:flex;justify-content:space-between;font-size:0.85em;color:#444;border-bottom:1px dashed #eee;padding-bottom:6px;margin-bottom:6px}
-            .trade-info{display:flex;justify-content:space-between;font-size:0.85em;color:#555;margin-bottom:4px}
-            .trade-footer{display:flex;justify-content:space-between;font-size:0.8em;color:#999;border-top:1px solid #f0f0f0;padding-top:4px;margin-top:4px}
-            .tag{padding:2px 5px;border-radius:3px;color:white;font-size:0.75em}
+            .trade-card{background:#fff;border-left:5px solid #2c3e50;padding:12px;margin-bottom:8px;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,0.1)}
+            .trade-header{display:flex;justify-content:space-between;font-weight:bold;margin-bottom:5px}
+            .trade-detail{font-size:0.9em;color:#555;margin-bottom:5px}
+            .trade-footer{font-size:0.8em;color:#999;border-top:1px solid #f0f0f0;padding-top:5px}
+            .pnl-pos{color:#d93025;font-weight:bold} .no-data{text-align:center;color:#999;padding:10px}
+            .tag{padding:2px 5px;border-radius:3px;color:white;font-size:0.75em;margin-left:5px}
             .t-lion{background:#d93025} .t-bear{background:#f9ab00} .t-main{background:#333}
-            .pnl-pos{color:#d93025;font-weight:bold} .pnl-neg{color:#1e8e3e;font-weight:bold}
-            .no-data{text-align:center;color:#999;padding:10px;font-size:0.9em}
-            .data-table{width:100%;border-collapse:collapse;font-size:0.85em}
-            .data-table th{background:#2c3e50;color:white;padding:6px;text-align:center}
-            .data-table td{border-bottom:1px solid #eee;padding:6px;text-align:center}
+            .refresh-btn{display:block;width:100%;padding:10px;background:#2c3e50;color:white;text-align:center;text-decoration:none;border-radius:8px;margin-bottom:15px}
         </style></head><body>
-            <div class="card header">
-                <h2>🦁 獅王戰情 V9.1 (30萬目標)</h2>
-                <div class="date">2025-12-26 (GitHub 雲端版)</div>
-                <div class="progress-wrap"><div class="progress-bar"></div></div>
-                <div style="text-align:right;font-size:0.8em;color:#d93025;font-weight:bold">達成率 0%</div>
+            <div class="card" style="text-align:center">
+                <h2 style="margin:0;color:#2c3e50">🦁 獅王戰情 V10.5 (GitHub版)</h2>
+                <div style="font-size:0.8em;color:#888;margin-bottom:5px">2025-12-26</div>
+                <div style="background:#eee;height:10px;border-radius:5px;margin:10px 0;overflow:hidden"><div style="background:#d93025;width:0%;height:100%"></div></div>
+                <div style="text-align:right;color:#d93025;font-size:0.8em;font-weight:bold">目標 30 萬: 達成 0%</div>
             </div>
             <div class="money-grid">
-                <div class="money-item" style="border-color:#2c3e50"><span class="money-val">$100,000</span><span class="money-lbl">🪙 初始本金</span></div>
-                <div class="money-item" style="border-color:#f9ab00"><span class="money-val">$98,982</span><span class="money-lbl">💰 當前權益</span></div>
-                <div class="money-item" style="border-color:#1e8e3e"><span class="money-val" style="color:#1e8e3e">$-1,018</span><span class="money-lbl">💵 淨損益</span></div>
-                <div class="money-item" style="border-color:#2f855a"><span class="money-val">$706</span><span class="money-lbl">🔋 可用資金</span></div>
+                <div class="money-item" style="border-color:#f9ab00"><span class="money-val">$97,964</span><span class="money-lbl">💰 總權益</span></div>
+                <div class="money-item" style="border-color:#1e8e3e"><span class="money-val" style="color:#1e8e3e">$-2,036</span><span class="money-lbl">💵 淨損益</span></div>
+                <div class="money-item"><span class="money-val">$79,191</span><span class="money-lbl">📉 已投入</span></div>
+                <div class="money-item" style="border-color:#2f855a"><span class="money-val">$18,773</span><span class="money-lbl">🔋 可用資金</span></div>
             </div>
-            <div class="section-title">🚨 隔日進場訊號 (Buy Signals)</div>
-                <div class="trade-card" style="border-left-color: #2c3e50;">
-                    <div class="trade-header">
-                        <span>3008.TW <span class="tag t-main">4.主力籌碼</span></span>
-                        <span style="color:#d93025; font-weight:bold;">進場</span>
-                    </div>
-                    <div class="trade-detail">
-                        <span>參考價: $2385.0</span>
-                        <span>建議股數: <b>8</b> 股</span>
-                    </div>
-                    <div class="trade-info"><span>環境: 震盪 (Flat)|美股助漲</span></div>
-                    <div class="trade-footer">🛑 停損: 2265.75 | 🎯 停利: 2742.75</div>
-                </div>
-            <div class="section-title">🛡️ 持倉出場計畫 (Exit Plan)</div>
+            <div class="section-title">🚨 隔日進場訊號</div><div class='no-data'>今日無新訊號</div>
+            <div class="section-title">🛡️ 持倉監控</div>
                 <div class="trade-card" style="border-left-color: #f9ab00;">
                     <div class="trade-header">
                         <span>2357.TW</span>
-                        <span style="color:#f9ab00;">持倉中</span>
+                        <span style="color:#f9ab00;">持倉</span>
                     </div>
                     <div class="trade-detail">
-                        <span>成本: $19,841 (36股)</span>
+                        <span>成本: $19,841</span>
                     </div>
-                    <div class="trade-footer" style="color:#d93025; font-weight:bold;">
-                        🛑 停損: 523.45 | 🎯 停利: 633.65
-                    </div>
+                    <div class="trade-footer">🛑 523.45 | 🎯 633.65</div>
                 </div>
                 <div class="trade-card" style="border-left-color: #f9ab00;">
                     <div class="trade-header">
                         <span>2368.TW</span>
-                        <span style="color:#f9ab00;">持倉中</span>
+                        <span style="color:#f9ab00;">持倉</span>
                     </div>
                     <div class="trade-detail">
-                        <span>成本: $19,521 (28股)</span>
+                        <span>成本: $19,521</span>
                     </div>
-                    <div class="trade-footer" style="color:#d93025; font-weight:bold;">
-                        🛑 停損: 662.15 | 🎯 停利: 801.55
-                    </div>
+                    <div class="trade-footer">🛑 662.15 | 🎯 801.55</div>
                 </div>
                 <div class="trade-card" style="border-left-color: #f9ab00;">
                     <div class="trade-header">
                         <span>2603.TW</span>
-                        <span style="color:#f9ab00;">持倉中</span>
+                        <span style="color:#f9ab00;">持倉</span>
                     </div>
                     <div class="trade-detail">
-                        <span>成本: $19,869 (104股)</span>
+                        <span>成本: $19,869</span>
                     </div>
-                    <div class="trade-footer" style="color:#d93025; font-weight:bold;">
-                        🛑 停損: 181.45 | 🎯 停利: 219.65
-                    </div>
+                    <div class="trade-footer">🛑 181.45 | 🎯 219.65</div>
                 </div>
                 <div class="trade-card" style="border-left-color: #f9ab00;">
                     <div class="trade-header">
                         <span>6235.TW</span>
-                        <span style="color:#f9ab00;">持倉中</span>
+                        <span style="color:#f9ab00;">持倉</span>
                     </div>
                     <div class="trade-detail">
-                        <span>成本: $19,960 (307股)</span>
+                        <span>成本: $19,960</span>
                     </div>
-                    <div class="trade-footer" style="color:#d93025; font-weight:bold;">
-                        🛑 停損: 61.75 | 🎯 停利: 74.75
-                    </div>
-                </div>
-                <div class="trade-card" style="border-left-color: #f9ab00;">
-                    <div class="trade-header">
-                        <span>3008.TW</span>
-                        <span style="color:#f9ab00;">持倉中</span>
-                    </div>
-                    <div class="trade-detail">
-                        <span>成本: $19,085 (8股)</span>
-                    </div>
-                    <div class="trade-footer" style="color:#d93025; font-weight:bold;">
-                        🛑 停損: 2265.75 | 🎯 停利: 2742.75
-                    </div>
-                </div>
-            <div class="section-title">📊 策略獲利矩陣 (Profit Matrix)</div>
-            <div class="card" style="overflow-x:auto"><table border="1" class="dataframe data-table">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>交易次數</th>
-      <th>總獲利</th>
-      <th>平均獲利</th>
-      <th>勝率</th>
-    </tr>
-    <tr>
-      <th>策略</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>4.主力籌碼</th>
-      <td>1</td>
-      <td>-1018</td>
-      <td>-1018</td>
-      <td>0.0</td>
-    </tr>
-  </tbody>
-</table></div>
-            <div class="section-title">📜 近期交易紀錄 (History)</div>
-                <div class="trade-card" style="border-left-color: #1e8e3e">
-                    <div class="trade-header">
-                        <span>3008.TW <span class="tag t-main">4.主力籌碼</span></span>
-                        <span class="pnl-neg">-1018</span>
-                    </div>
-                    <div class="trade-detail">
-                        <span>$2,385 x 8股</span>
-                        <span class="pnl-neg">ROI: -5.33%</span>
-                    </div>
-                    <div class="trade-info"><span>成本: $19,085</span><span>❌ 觸價停損</span></div>
-                    <div class="trade-footer"><span>賣出: 2025-12-26</span></div>
+                    <div class="trade-footer">🛑 61.75 | 🎯 74.75</div>
                 </div>
         </body></html>
         
