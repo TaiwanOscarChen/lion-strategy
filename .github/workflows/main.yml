@@ -2,10 +2,9 @@ name: Lion King Strategy Daily Run
 
 on:
   schedule:
-    # 設定每天自動執行 (UTC時間 21:00 = 台灣時間清晨 05:00)
-    # 為了讓您測試，設為每小時執行一次
-    - cron: '0 * * * *'
-  workflow_dispatch: # 允許手動按按鈕執行
+    # 台灣時間早上 08:30 自動執行 (UTC 00:30)
+    - cron: '30 0 * * *'
+  workflow_dispatch: # 允許手動執行
 
 permissions:
   contents: write
@@ -21,7 +20,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12'  # 👈 關鍵修改：升級到 3.12
+          python-version: '3.12'
 
       - name: Install dependencies
         run: |
@@ -30,10 +29,11 @@ jobs:
       - name: Run Lion Bot Strategy
         run: python lion_bot.py
 
-      - name: Commit and Push Report
+      - name: Commit and Push Data (Auto Save)
         run: |
-          git config --global user.name "GitHub Action"
-          git config --global user.email "action@github.com"
-          git add index.html
-          git commit -m "Update Lion Report" || echo "No changes to commit"
+          git config --global user.name "LionBot"
+          git config --global user.email "bot@lion.strategy"
+          # 這裡關鍵：同時儲存 網頁(index.html) 和 帳本(Lion_Ledger.csv)
+          git add index.html Lion_Ledger.csv
+          git commit -m "📊 Daily Update: Ledger & Report" || echo "No changes to commit"
           git push
