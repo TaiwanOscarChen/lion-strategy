@@ -1,0 +1,39 @@
+name: Lion King Strategy Daily Run
+
+on:
+  schedule:
+    # 設定每天自動執行 (UTC時間 21:00 = 台灣時間清晨 05:00)
+    # 這裡設為每小時執行一次，確保您隨時看都有數據
+    - cron: '0 * * * *'
+  workflow_dispatch: # 允許手動按按鈕執行
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Install dependencies
+        run: |
+          pip install yfinance pandas pandas_ta
+
+      - name: Run Lion Bot Strategy
+        run: python lion_bot.py
+
+      - name: Commit and Push Report
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "action@github.com"
+          git add index.html
+          git commit -m "Update Lion Report" || echo "No changes to commit"
+          git push
